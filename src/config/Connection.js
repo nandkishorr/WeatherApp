@@ -11,7 +11,7 @@ async function connectToDb() {
 
         // Connect to MongoDB
        const connection = await mongoose.connect(dbUri, {
-            dbName: '', 
+            dbName: 'weatherApp', 
         });
         console.log('Connected to MongoDB ');
         return connection;

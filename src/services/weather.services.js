@@ -1,5 +1,6 @@
 const axios = require('axios');
 const Weather = require('../models/weather.model');
+const DailySummary = require('../models/dailysummary.model');
 
 const fetchWeatherData = async (city) => {
     try {
@@ -51,13 +52,15 @@ const fetchWeatherData = async (city) => {
   
     await dailySummary.save();
   };
-  const getDailySummaryData = async (req, res) => {
+  const getDailySummaryData = async (city) => {
     try {
-      const city = req.params.city;
       const summary = await DailySummary.find({ city }).sort({ date: -1 });
-      res.status(200).json(summary);
+      if (summary.length === 0) {
+        return null;
+      }
+      return summary[0];
     } catch (error) {
-      res.status(500).json({ error: 'Error retrieving daily summary' });
+      throw new Error('Error retrieving daily summary data');
     }
   };
 

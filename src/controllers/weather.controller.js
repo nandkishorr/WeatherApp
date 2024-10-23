@@ -21,17 +21,19 @@ const fetchWeather = async (req, res) => {
   };
 
   const getDailySummary = async (req, res) => {
-    try{
-      const city = req.params.city;
-      const summary=await getDailySummaryData({city});
-      res.send(summary);
-    }
-    catch(error){
+    try {
+      const city = req.body.city;
+      console.log("City requested:", city);
+      const summary = await getDailySummaryData(city);
+      if (!summary) {
+        return res.status(404).json({ error: 'No daily summary data found' });
+      }
+      res.status(200).json(summary);
+    } catch (error) {
       console.error('Error fetching daily summary:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
-  }
-
+  };
 module.exports = {
     fetchWeather,
     DailySummary,

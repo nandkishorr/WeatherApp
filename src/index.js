@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require("morgan");
 const dotenv = require('dotenv');
-const connectToDb =require('./config/Connection') 
+const connectToDb =require('./config/Connection'); 
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,11 +12,10 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-connectToDb()
+connectToDb();
 
-// Define your routes here
-// const Routes = require('./routes');
-// app.use('/', Routes);
+const Routes = require('./routes/weather.route');
+ app.use('/', Routes);
 
 // Start the server
 app.listen(port, () => {
