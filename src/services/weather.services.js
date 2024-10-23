@@ -23,6 +23,36 @@ const fetchWeatherData = async (city) => {
     }
   };
 
+  const calculateDailySummary = async (city) => {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+  
+    const weatherData = await Weather.find({ city, timestamp: { $gte: startOfDay } });
+  
+    if (weatherData.length === 0) return;
+  
+    const minTemp = Math.min(...weatherData.map(data => data.temperature));
+    const maxTemp = Math.max(...weatherData.map(data => data.temperature));
+    const avgTemp = weatherData.reduce((sum, data) => sum + data.temperature, 0) / weatherData.length;
+  
+    const conditions = weatherData.map(data => data.condition);
+    const dominantCondition = conditions.sort((a, b) => 
+      conditions.filter(v => v === a).length - conditions.filter(v => v === b).length
+    ).pop();
+  
+    const dailySummary = new DailySummary({
+      city,
+      min_temperature: minTemp,
+      max_temperature: maxTemp,
+      avg_temperature: avgTemp,
+      dominant_condition: dominantCondition,
+      date: startOfDay
+    });
+  
+    await dailySummary.save();
+  };
+  
   module.exports = {
     fetchWeatherData,
+    calculateDailySummary
   }
