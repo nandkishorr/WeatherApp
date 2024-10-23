@@ -7,5 +7,5 @@ const weatherSchema = new mongoose.Schema({
         timestamp: { type: Date, default: Date.now }, 
       });
       
-const Weather = mongoose.model('weatherSchema', weatherSchema);
+const Weather = mongoose.model('weather', weatherSchema);
 module.exports = Weather;
