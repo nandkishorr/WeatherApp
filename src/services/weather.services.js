@@ -51,8 +51,19 @@ const fetchWeatherData = async (city) => {
   
     await dailySummary.save();
   };
-  
+  const getDailySummaryData = async (req, res) => {
+    try {
+      const city = req.params.city;
+      const summary = await DailySummary.find({ city }).sort({ date: -1 });
+      res.status(200).json(summary);
+    } catch (error) {
+      res.status(500).json({ error: 'Error retrieving daily summary' });
+    }
+  };
+
+
   module.exports = {
     fetchWeatherData,
-    calculateDailySummary
+    calculateDailySummary,
+    getDailySummaryData
   }

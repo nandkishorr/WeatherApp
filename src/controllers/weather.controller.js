@@ -1,4 +1,4 @@
-const { fetchWeatherData,calculateDailySummary } = require('../services/weather.services');
+const { fetchWeatherData,calculateDailySummary,getDailySummaryData} = require('../services/weather.services');
 
 const fetchWeather = async (req, res) => {
     try {
@@ -20,7 +20,20 @@ const fetchWeather = async (req, res) => {
     }
   };
 
+  const getDailySummary = async (req, res) => {
+    try{
+      const city = req.params.city;
+      const summary=await getDailySummaryData({city});
+      res.send(summary);
+    }
+    catch(error){
+      console.error('Error fetching daily summary:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
 module.exports = {
     fetchWeather,
-    DailySummary
+    DailySummary,
+    getDailySummary
 }
