@@ -13,7 +13,10 @@ app.use(express.json());
 
 // Connect to MongoDB
 connectToDb();
-
+//cron job
+require('./jobs/fetchweather.job');
+require('./jobs/dailysummary.job');
+// Routes
 const Routes = require('./routes/weather.route');
  app.use('/', Routes);
 
