@@ -1,11 +1,15 @@
 const axios = require('axios');
 const Weather = require('../models/weather.model');
 const DailySummary = require('../models/dailysummary.model');
-
+const dotenv = require('dotenv');
+dotenv.config();
 const fetchWeatherData = async (city) => {
     try {
-      const response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.WEATHER_API_KEY}`);
       
+      key=process.env.OPEN_WEATHER_API_KEY;
+      console.log(key);
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=8ed502b7bb8fd651f9b5600c15b3ce87`);
+      // console.log(response.data);
       const temp_celsius = response.data.main.temp - 273.15;
       const feels_like_celsius = response.data.main.feels_like - 273.15;
       const condition = response.data.weather[0].main;
@@ -16,9 +20,8 @@ const fetchWeatherData = async (city) => {
         feels_like: feels_like_celsius,
         condition,
       });
-  
+      // console.log(weatherData);
       await weatherData.save();
-      console.log(`Weather data for ${city} saved.`);
     } catch (error) {
       console.error(`Error fetching weather for ${city}: ${error.message}`);
     }
