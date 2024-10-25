@@ -20,7 +20,7 @@ const fetchWeatherData = async (city) => {
   
       const weatherData = new Weather({
         city,
-        temperature: temp_celsius,
+        temp: temp_celsius,
         feels_like: feels_like_celsius,
         temp_min: temp_min_celsius,
         temp_max: temp_max_celsius,
@@ -43,10 +43,11 @@ const fetchWeatherData = async (city) => {
   
     if (weatherData.length === 0) return;
   
-    const minTemp = Math.min(...weatherData.map(data => data.temperature));
-    const maxTemp = Math.max(...weatherData.map(data => data.temperature));
-    const avgTemp = weatherData.reduce((sum, data) => sum + data.temperature, 0) / weatherData.length;
-  
+    const minTemp = Math.min(...weatherData.map(data => data.temp));
+    const maxTemp = Math.max(...weatherData.map(data => data.temp));
+    const avgTemp = weatherData.reduce((sum, data) => sum + data.temp, 0) / weatherData.length;
+    const avgHumidity = weatherData.reduce((sum, data) => sum + data.humidity, 0) / weatherData.length;
+    const avgPressure = weatherData.reduce((sum, data) => sum + data.pressure, 0) / weatherData.length;
     const conditions = weatherData.map(data => data.condition);
     const dominantCondition = conditions.sort((a, b) => 
       conditions.filter(v => v === a).length - conditions.filter(v => v === b).length
@@ -54,9 +55,12 @@ const fetchWeatherData = async (city) => {
   
     const dailySummary = new DailySummary({
       city,
-      min_temperature: minTemp,
-      max_temperature: maxTemp,
-      avg_temperature: avgTemp,
+      min_temp: minTemp,
+      max_temp: maxTemp,
+      avg_temp: avgTemp,
+      avg_feels_like: avgFeelsLike,
+      avg_humidity: avgHumidity,
+      avg_pressure: avgPressure,
       dominant_condition: dominantCondition,
       date: startOfDay
     });

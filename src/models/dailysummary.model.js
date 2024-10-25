@@ -6,6 +6,8 @@ const DailySummarySchema = new mongoose.Schema({
   min_temp: { type: Number, required: true },
   max_temp: { type: Number, required: true },
   avg_temp: { type: Number, required: true },
+  avg_humidity: { type: Number, required: true },
+  avg_pressure: { type: Number, required: true },
   dominant_condition: { type: String, required: true },
 });
 
