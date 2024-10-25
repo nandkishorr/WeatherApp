@@ -7,17 +7,25 @@ const fetchWeatherData = async (city) => {
     try {
       
       key=process.env.OPEN_WEATHER_API_KEY;
-      console.log(key);
-      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=8ed502b7bb8fd651f9b5600c15b3ce87`);
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}`);
       // console.log(response.data);
-      const temp_celsius = response.data.main.temp - 273.15;
-      const feels_like_celsius = response.data.main.feels_like - 273.15;
+      const temp_celsius = (response.data.main.temp - 273.15).toFixed(2);
+      const feels_like_celsius = (response.data.main.feels_like - 273.15).toFixed(2);
+      const temp_min_celsius = (response.data.main.temp_min - 273.15).toFixed(2);
+      const temp_max_celsius = (response.data.main.temp_max - 273.15).toFixed(2);
+      const pressure = response.data.main.pressure;
+      const humidity = response.data.main.humidity;
+      const wind_speed = response.data.wind.speed;
       const condition = response.data.weather[0].main;
   
       const weatherData = new Weather({
         city,
         temperature: temp_celsius,
         feels_like: feels_like_celsius,
+        temp_min: temp_min_celsius,
+        temp_max: temp_max_celsius,
+        pressure,
+        humidity,
         condition,
       });
       // console.log(weatherData);
