@@ -7,6 +7,7 @@ const weatherSchema = new mongoose.Schema({
         temp_max: { type: Number, required: true },
         pressure: { type: Number, required: true },
         humidity: { type: Number, required: true },
+        wind_speed: { type: Number, required: true },
         condition: { type: String, required: true },
         timestamp: { type: Date, default: Date.now }, 
       });

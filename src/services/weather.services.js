@@ -26,6 +26,7 @@ const fetchWeatherData = async (city) => {
         temp_max: temp_max_celsius,
         pressure,
         humidity,
+        wind_speed,
         condition,
       });
       // console.log(weatherData);
@@ -48,6 +49,7 @@ const fetchWeatherData = async (city) => {
     const avgTemp = weatherData.reduce((sum, data) => sum + data.temp, 0) / weatherData.length;
     const avgHumidity = weatherData.reduce((sum, data) => sum + data.humidity, 0) / weatherData.length;
     const avgPressure = weatherData.reduce((sum, data) => sum + data.pressure, 0) / weatherData.length;
+    const avgWindSpeed = weatherData.reduce((sum, data) => sum + data.wind_speed, 0) / weatherData.length;
     const conditions = weatherData.map(data => data.condition);
     const dominantCondition = conditions.sort((a, b) => 
       conditions.filter(v => v === a).length - conditions.filter(v => v === b).length
@@ -61,6 +63,7 @@ const fetchWeatherData = async (city) => {
       avg_feels_like: avgFeelsLike,
       avg_humidity: avgHumidity,
       avg_pressure: avgPressure,
+      avg_wind_speed: avgWindSpeed,
       dominant_condition: dominantCondition,
       date: startOfDay
     });
