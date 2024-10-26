@@ -6,6 +6,7 @@ services:
       - "3000:3000"
     environment:
       MONGODB_URLL: "your_mongo_atlas_connection_string"
+      OPEN_WEATHER_API_KEY: "your_open_weather_api_key"
     volumes:
       - .:/app
     command: npm start
