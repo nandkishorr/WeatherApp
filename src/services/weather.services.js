@@ -132,6 +132,7 @@ const fetchWeatherData = async (city) => {
   }
   const forecastWeather = async (city) => {
     try {
+      console.log("City requested:", city);
       const Apikey = process.env.OPEN_WEATHER_API_KEY;
       const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast/daily?q=${city}&cnt=10&appid=${Apikey}`);
       
@@ -151,10 +152,32 @@ const fetchWeatherData = async (city) => {
       console.error(`Error fetching weather for ${city}: ${error.message}`);
     }
   };
+  const fetchHourlyWeatherData = async (city) => {
+    try {
+      console.log("City requested:", city);
+      const Apikey = process.env.OPEN_WEATHER_API_KEY;
+      const response = await axios.get(`https://pro.openweathermap.org/data/2.5/forecast/hourly?q=${city}&appid=${Apikey}&cnt=5`);
+      const HourlyData=response.data.list.map(data => ({
+        day: `Day ${new Date(data.dt * 1000).getUTCDate()}`, 
+        hum: data.main.humidity,                              
+        pres: data.main.pressure,                            
+        temp: (data.main.temp - 273.15).toFixed(0),         
+        wnd: data.wind.speed,                                
+        vis: (data.visibility / 1000).toFixed(0),           
+        prec: data.rain ? data.rain['1h'] : 0,    
+        fl: (data.main.feels_like - 273.15).toFixed(0),     
+        cld: data.clouds.all,                              
+      }));
+      return HourlyData;
+    } catch (error) {
+      console.error(`Error fetching weather data for ${city}: ${error.message}`);
+    }
+  };
   module.exports = {
     fetchWeatherData,
     calculateDailySummary,
     getDailySummaryData,
     fetchConditionCount,
-    forecastWeather
+    forecastWeather,
+    fetchHourlyWeatherData
   }
