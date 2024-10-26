@@ -81,8 +81,54 @@ const fetchWeatherData = async (city) => {
       throw new Error('Error retrieving daily summary data');
     }
   };
+  const getStartAndEndOfMonth = () => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1); // First day of the month
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Last day of the month
+    return {
+        startOfMonth: Math.floor(start.getTime() / 1000), // Convert to Unix timestamp
+        endOfMonth: Math.floor(end.getTime() / 1000),
+    };
+};
+  const fetchConditionCount=async(city)=>{
+    try{
+      key=process.env.OPEN_WEATHER_API_KEY;
+      const {startOfMonth,endOfMonth}=getStartAndEndOfMonth();
+      const weatherResponse = await axios.get(`https://pro.openweathermap.org/data/2.5/forecast/climate?`, {
+        params: {
+          q:city,
+          start: startOfMonth, 
+          end: endOfMonth, 
+          appid: apiKey,
+        },
+      });
+      if (weatherResponse.status === 200) {
+        const weatherData = weatherResponse.data;
 
+        // Initialize counts
+        let rainCount = 0;
+        let clearCount = 0;
 
+        // Loop through the list of weather data to count occurrences
+        weatherData.list.forEach((entry) => {
+          const weatherCondition = entry.weather[0].main; // Access the main weather condition
+          if (weatherCondition === "Rain" || weatherCondition === "Drizzle" || weatherCondition === "Thunderstorm" || weatherCondition === "Tornado") {
+            rainCount += 1;
+          } else if (weatherCondition === "Clear" || weatherCondition === "Clouds" || weatherCondition === "Mist" || weatherCondition === "Haze" || weatherCondition === "Fog" || weatherCondition === "Smoke" || weatherCondition === "Dust" || weatherCondition === "Sand" || weatherCondition === "Ash" || weatherCondition === "Squall" ) {
+            clearCount += 1;
+          }
+        });
+        return[
+          {name:"Sunny/Cloudy",value:clearCount},
+          {name:"Rainy",value:rainCount}]
+      } else {
+        console.error('Error fetching weather data:', weatherResponse.status);
+      }
+    }
+    catch(error){
+      console.error(`Error fetching weather for ${city}: ${error.message}`);
+    }
+  }
   module.exports = {
     fetchWeatherData,
     calculateDailySummary,
