@@ -99,7 +99,7 @@ const fetchWeatherData = async (city) => {
           q:city,
           start: startOfMonth, 
           end: endOfMonth, 
-          appid: apiKey,
+          appid: key,
         },
       });
       if (weatherResponse.status === 200) {
@@ -132,5 +132,6 @@ const fetchWeatherData = async (city) => {
   module.exports = {
     fetchWeatherData,
     calculateDailySummary,
-    getDailySummaryData
+    getDailySummaryData,
+    fetchConditionCount
   }
