@@ -73,7 +73,7 @@ Ensure you have the following installed:
 To begin, clone the repository to your local machine:
 ```bash
 git clone <repository_url>
-cd weather-monitoring-system/server
+cd weatherApp-Backend
 
 # With npm
 npm install
