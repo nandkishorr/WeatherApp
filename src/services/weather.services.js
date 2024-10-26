@@ -41,15 +41,24 @@ const fetchWeatherData = async (city) => {
     startOfDay.setHours(0, 0, 0, 0);
   
     const weatherData = await Weather.find({ city, timestamp: { $gte: startOfDay } });
-  
-    if (weatherData.length === 0) return;
+    if (weatherData.length === 0) {
+      const previousDaySummary = await DailySummary.findOne({
+          city,
+          date: {
+              $gte: new Date(startOfDay.setDate(startOfDay.getDate() - 1)),
+              $lt: startOfDay
+          }
+      });
+      if (!previousDaySummary) return;
+      return previousDaySummary;
+  }
   
     const minTemp = Math.min(...weatherData.map(data => data.temp));
     const maxTemp = Math.max(...weatherData.map(data => data.temp));
     const avgTemp = weatherData.reduce((sum, data) => sum + data.temp, 0) / weatherData.length;
     const avgHumidity = weatherData.reduce((sum, data) => sum + data.humidity, 0) / weatherData.length;
-    const avgPressure = weatherData.reduce((sum, data) => sum + data.pressure, 0) / weatherData.length;
-    const avgWindSpeed = weatherData.reduce((sum, data) => sum + data.wind_speed, 0) / weatherData.length;
+    const avgPressure = (weatherData.reduce((sum, data) => sum + data.pressure, 0) / weatherData.length).toFixed(2);
+    const avgWindSpeed = (weatherData.reduce((sum, data) => sum + data.wind_speed, 0) / weatherData.length).toFixed(2);
     const conditions = weatherData.map(data => data.condition);
     const dominantCondition = conditions.sort((a, b) => 
       conditions.filter(v => v === a).length - conditions.filter(v => v === b).length
@@ -60,7 +69,6 @@ const fetchWeatherData = async (city) => {
       min_temp: minTemp,
       max_temp: maxTemp,
       avg_temp: avgTemp,
-      avg_feels_like: avgFeelsLike,
       avg_humidity: avgHumidity,
       avg_pressure: avgPressure,
       avg_wind_speed: avgWindSpeed,
@@ -76,7 +84,7 @@ const fetchWeatherData = async (city) => {
       if (summary.length === 0) {
         return null;
       }
-      return summary[0];
+      return summary[summary.length - 1];
     } catch (error) {
       throw new Error('Error retrieving daily summary data');
     }
