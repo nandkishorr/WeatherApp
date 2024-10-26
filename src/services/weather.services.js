@@ -118,9 +118,10 @@ const fetchWeatherData = async (city) => {
             clearCount += 1;
           }
         });
+        const month = new Date().toLocaleString('default', { month: 'long' });
         return[
-          {name:"Sunny/Cloudy",value:clearCount},
-          {name:"Rainy",value:rainCount}]
+          {month,name:"Sunny/Cloudy",value:clearCount},
+          {month,name:"Rainy",value:rainCount}]
       } else {
         console.error('Error fetching weather data:', weatherResponse.status);
       }
@@ -129,9 +130,31 @@ const fetchWeatherData = async (city) => {
       console.error(`Error fetching weather for ${city}: ${error.message}`);
     }
   }
+  const forecastWeather = async (city) => {
+    try {
+      const Apikey = process.env.OPEN_WEATHER_API_KEY;
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast/daily?q=${city}&cnt=10&appid=${Apikey}`);
+      
+      const forecastData = response.data.list.map(day => ({
+        date: new Date(day.dt * 1000).toLocaleDateString(), 
+        temp: (day.temp.day - 273.15).toFixed(0),
+        minTemp: (day.temp.min - 273.15).toFixed(0),
+        maxTemp: (day.temp.max - 273.15).toFixed(0),
+        climateIcon: `https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`,
+        main: day.weather[0].main,
+      }));
+  
+      console.log("Forecast Data:", forecastData); 
+      return forecastData; 
+
+    } catch (error) {
+      console.error(`Error fetching weather for ${city}: ${error.message}`);
+    }
+  };
   module.exports = {
     fetchWeatherData,
     calculateDailySummary,
     getDailySummaryData,
-    fetchConditionCount
+    fetchConditionCount,
+    forecastWeather
   }
